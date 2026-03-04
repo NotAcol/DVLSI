@@ -13,12 +13,6 @@ architecture zzz of ShiftRegister is
   signal DataReg: std_logic_vector(3 downto 0);
 begin
 
-  if SlideDir = '1' then
-    O <= DataReg(0);
-  else
-    O <= DataReg(3);
-  end if;
-
   edge:process(Clk, Reset) begin
     if Reset = '1' then
       DataReg <= (others => '0');
@@ -27,10 +21,12 @@ begin
         DataReg <= I;
       elsif Enable = '1' and SlideDir = '1' then
         DataReg <= SerIn & DataReg(3 downto 1);
-      else
-        DataReg <= DataReg(2 downto 0) & SerIn ;
+      elsif Enable = '1' and SlideDir = '0' then
+        DataReg <= DataReg(2 downto 0) & SerIn;
       end if;
     end if;
   end process;
 
-end zzz
+  O <= DataReg(0) when SlideDir = '1' else DataReg(3);
+
+end zzz;
