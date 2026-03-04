@@ -26,7 +26,7 @@ architecture zzz of Tb is
   constant CLOCK_PERIOD : time := 10 ns;
 
   begin
-    Dut: main port map (
+    Dut: ShiftRegister port map (
       Clk       => Clk,
       Load      => Load,
       Reset     => Reset,
@@ -44,7 +44,7 @@ architecture zzz of Tb is
       Reset <= '0';
       Enable <= '1';
       SlideDir <= '0';
-      SerIn <= '0';
+      SerIn <= '1';
       I <= "1010";
 
     wait until falling_edge(Clk);
@@ -52,7 +52,8 @@ architecture zzz of Tb is
 
     wait until falling_edge(Clk);
     wait until falling_edge(Clk);
-    SerIn <= '1';
+    wait until falling_edge(Clk);
+    SerIn <= '0';
     SlideDir <='1';
 
     wait until falling_edge(Clk);
