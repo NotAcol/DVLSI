@@ -180,29 +180,51 @@
 Ο αποκωδικοποιητής 3 σε 8 είναι ένα συνδυαστικό κύκλωμα που για κάθε συνδυασμό των εισόδων του
 ενεργοποιεί μόνο μία από τις εξόδους.
 
-// TODO(acol): Screenshot kyklwma
+#figure(
+  image("./assets/1.1.png", width:80%),
+  caption: [RTL]
+)
 
 === Implementation
 Ο πίνακας αληθείας του αποκωδικοποιητή φαίνεται από τις γραμμές 16-23 του κωδικά για το behavioral.
 
 ==== Dataflow
-#figure(
-  raw(read("./vhdl/decoder_dataflow.vhd"), lang: "vhdl"),
-  caption: [Dataflow]
-)
+#raw(read("./vhdl/decoder_dataflow.vhd"), lang: "vhdl")
 
 ==== Behavioral
-#figure(
-  raw(read("./vhdl/decoder_behavioral.vhd"), lang: "vhdl"),
-  caption: [Behavioral]
-)
+#raw(read("./vhdl/decoder_behavioral.vhd"), lang: "vhdl")
 
 === Testbench
+
 Το κύκλωμα έχει πολύ λίγες πιθανές εισόδους και δεν έχει state οπότε μπορούμε εύκολα
 να σχεδιάσουμε εξαντλητικά test bench όπως φαίνεται παρακάτω.
 
+#raw(read("./vhdl/decoder_behavioral_bench.vhd"), lang: "vhdl")
+
 #figure(
-  raw(read("./vhdl/decoder_behavioral_bench.vhd"), lang: "vhdl"),
+  image("./assets/1.1_bench.png", width:80%),
   caption: [Test Bench]
 )
 
+== Καταχωρητής Ολίσθησης
+Ο καταχτητής ολίσθησης είναι σύγχρονο κύκλωμα που δέχεται μια παράλληλη είσοδο των
+4bit μέσω του I και μια συριακή μέσω του SerIn. Τα σήματα έλεγχου του είναι το reset που
+τον επαναφέρει στο 0 ασύγχρονα, το load που ελέγχει την παράλληλη είσοδο, το enable
+που ελέγχει την σειριακή λειτουργία του κυκλώματος και το slide bit που ελέγχει την
+κατεύθυνση της ολίσθησης.
+
+// TODO(acol): RTL
+
+=== Implementation
+#raw(read("./vhdl/shift_register.vhd"), lang: "vhdl")
+
+=== Test Bench
+Φορτώνουμε τον αριθμό 1010 και κάνουμε αριστερό slide για 2 cycles ενώ φορτώνουμε δυο
+0 μέσω του SerIn και μετά κάνουμε δυο cycles slide δεξιά. Οι αναμενόμενες τιμές του ouput
+είναι 10 κατά το αριστερό slide και 00 για το δεξί (θα διαβάσουμε τα μηδέν που προσθέσαμε
+μέσω του serial input).
+
+#raw(read("./vhdl/shift_register_bench.vhd"), lang: "vhdl")
+// TODO(acol): caption: [Test Bench]
+
+Παρατηρούμε ότι το output είναι το αναμενόμενο 1000!
