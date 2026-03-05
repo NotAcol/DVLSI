@@ -334,46 +334,90 @@
 == 4 Bit Full Adder
 Υποθέτουμε εδώ ότι ο αθροιστής που ζητείται είναι τύπου ripple carry. Αρκεί να
 συνδέσουμε σε σειρά τα carry τεσσάρων full adder.
-//TODO
+
+#figure(
+  image("./assets/2.3.png", width:85%),
+  caption: [RTL]
+)
 
 === Implementation
 #raw(read("./vhdl/part_b/design_sources/4bit_full_adder.vhd"), lang: "vhdl")
-//TODO
+
+Το οποίο μας δίνει στο critical path του synthesis 5.970ns.
+
+#figure(
+  image("./assets/2.3_critical_path_5.970.png", width:85%),
+  caption: [Critical Path 5.970ns]
+)
 
 === Test Bench
 Μπορούμε να εξετάσουμε διεξοδικά τον πίνακα αληθείας.
 
 #raw(read("./vhdl/part_b/bench/4bit_full_adder_bench.vhd"), lang: "vhdl")
-//TODO
+
+Παρακάτω φαίνονται τα αποτελέσματα για τα δυο πρώτα εξωτερικά loop.
+
+#figure(
+  image("./assets/2.3_bench.png", width:100%),
+  caption: [Test Bench]
+)
 
 == BCD
 Το κύκλωμα κάνει πρόσθεση δυο δεκαδικών αριθμών σε δυαδική αναπαράσταση με χρήση
 δυο Full Adder των 4bit. Ανιχνεύει όταν το άθροισμα είναι πάνω από 9 και προσθέτει 6
 στον δεύτερο Full Adder 4bit αλλιώς προσθέτει 0.
-//TODO
+
+#figure(
+  image("./assets/2.4.png", width:100%),
+  caption: [RTL]
+)
 
 === Implementation
 #raw(read("./vhdl/part_b/design_sources/bcd.vhd"), lang: "vhdl")
-//TODO
+
+Το οποίο μας δίνει στο critical path του synthesis 5.976ns.
+#figure(
+  image("./assets/2.4_critical_path_5.976.png", width:75%),
+  caption: [Critical Path 5.976ns]
+)
 
 === Test Bench
 Το Test Bench είναι παρόμοιο με του 4bit full adder μόνο που ελέγχουμε και για
 διάφορες τιμές του Cin.
 #raw(read("./vhdl/part_b/bench/bcd_bench.vhd"), lang: "vhdl")
-//TODO
 
+Παρακάτω φαίνονται τα αποτελέσματα για το ενάμιση πρώτο εξωτερικό loop.
+
+#figure(
+  image("./assets/2.4_bench.png", width:100%),
+  caption: [Test Bench]
+)
+
+#pagebreak()
 == 4 Digit BCD
 Για τον αθροιστή 4 δεκαδικών αριθμών θα χρησιμοποιήσουμε 4 κυκλώματα BCD και θα ενώσουμε σε
 σειρά τα $C_(o u t)$ τους με ανάλογο τρόπο του 4bit full adder.
-//TODO
+
+#figure(
+  image("./assets/2.5.png", width:85%),
+  caption: [RTL]
+)
+
 === Implementation
 #raw(read("./vhdl/part_b/design_sources/4digit_bcd.vhd"), lang: "vhdl")
 
-//TODO
+Το οποίο μας δίνει στο critical path του synthesis 9.538ns.
+#figure(
+  image("./assets/2.5_critical_path_9.538.png", width:75%),
+  caption: [Critical Path 9.538ns]
+)
 
 === Test Bench
 Δεν είναι δυνατό να ελέγξουμε όλες τις πιθανές τιμές, άρα θα κάνουμε probe edge
-cases.
+cases. Οι αναμενόμενες τιμές είναι γραμμένες στα comment του κωδικά.
 #raw(read("./vhdl/part_b/bench/4digit_bcd_bench.vhd"), lang: "vhdl")
 
-//TODO
+#figure(
+  image("./assets/2.5_bench.png", width:100%),
+  caption: [Test Bench]
+)
