@@ -46,7 +46,7 @@ begin
   end process;
 
   Sum <= std_logic_vector(Count);
-  Cout <= '1' when (Count = unsigned(Modulo) - 1 and CountEn = '1' and Up = '1') else 
+  Cout <= '1' when (Count = unsigned(Modulo)-1 and CountEn='1' and Up='1') else 
           '1' when (Count = 0 and CountEn = '1' and Up = '0') else
           '0';
 

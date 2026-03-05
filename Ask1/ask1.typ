@@ -189,17 +189,17 @@
 Ο πίνακας αληθείας του αποκωδικοποιητή φαίνεται από τις γραμμές 16-23 του κωδικά για το behavioral.
 
 ==== Dataflow
-#raw(read("./vhdl/decoder_dataflow.vhd"), lang: "vhdl")
+#raw(read("./vhdl/part_a/design_sources/decoder_dataflow.vhd"), lang: "vhdl")
 
 ==== Behavioral
-#raw(read("./vhdl/decoder_behavioral.vhd"), lang: "vhdl")
+#raw(read("./vhdl/part_a/design_sources/decoder_behavioral.vhd"), lang: "vhdl")
 
 === Testbench
 
 Το κύκλωμα έχει πολύ λίγες πιθανές εισόδους και δεν έχει state οπότε μπορούμε εύκολα
 να σχεδιάσουμε εξαντλητικά test bench όπως φαίνεται παρακάτω.
 
-#raw(read("./vhdl/decoder_behavioral_bench.vhd"), lang: "vhdl")
+#raw(read("./vhdl/part_a/bench/decoder_behavioral_bench.vhd"), lang: "vhdl")
 
 #figure(
   image("./assets/1.1_bench.png", width:100%),
@@ -219,7 +219,7 @@
 )
 
 === Implementation
-#raw(read("./vhdl/shift_register.vhd"), lang: "vhdl")
+#raw(read("./vhdl/part_a/design_sources/shift_register.vhd"), lang: "vhdl")
 
 Το οποίο μας δίνει στο critical path του synthesis 5.351ns.
 #figure(
@@ -233,7 +233,7 @@
 να δούμε τους άσους που φορτώσαμε στα register. Τα input δίνονται στο falling edge
 ενώ το σύστημα κάνει update στο rising edge.
 
-#raw(read("./vhdl/shift_register_bench.vhd"), lang: "vhdl")
+#raw(read("./vhdl/part_a/bench/shift_register_bench.vhd"), lang: "vhdl")
 
 #figure(
   image("./assets/1.2_bench.png", width:100%),
@@ -246,3 +246,35 @@
 την έξοδο ασύγχρονα, το down ελέγχει αν ο μετρητής θα αυξάνει η μειώνει σε κύκλο, και
 το CountEn λειτουργεί ως start stop της μέτρησης. Επίσης προσδέθηκαν τα Modulo και Up
 που ελέγχουν το σημείο που κάνουμε wrap και την κατεύθυνση της μέτρησης.
+
+#figure(
+  image("./assets/1.3.png", width:100%),
+  caption: [RTL]
+)
+
+=== Implementation
+Και τα δυο μέρη της άσκησης έγιναν σε ένα κύκλωμα για ευκολία στο debug, το κύκλωμα
+υποστηρίζει dynamic αλλαγή της τιμής του modulo αλλά μόνο προς το θετικό count (αφού
+δεν ζητήθηκε modulo για μέτρηση προς τα κάτω).
+
+#raw(read("./vhdl/part_a/design_sources/counter.vhd"), lang: "vhdl")
+
+Το οποίο μας δίνει στο critical path του synthesis 5.924ns.
+#figure(
+  image("./assets/1.3_critical_path_5.924.png", width: 80%),
+  caption: [Critical Path 5.924ns]
+)
+
+=== Test Bench
+Για το test bench κάνουμε αρχικά μέτρηση προς τα πάνω μέχρι overflow και μετά προς τα
+κάτω μέχρι underflow. Στην συνέχεια αλλάζουμε το modulo και δοκιμάζουμε την δυναμική
+αλλαγή του στην μέτρηση προς τα πάνω.
+#raw(read("./vhdl/part_a/bench/counter_bench.vhd"), lang: "vhdl")
+
+#figure(
+  image("./assets/1.3_bench.png", width:100%),
+  caption: [Test Bench]
+)
+
+#pagebreak()
+= Μέρος B

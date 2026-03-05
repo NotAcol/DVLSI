@@ -25,7 +25,6 @@ architecture Simulation of Counter_Tb is
   signal Modulo  : std_logic_vector(2 downto 0) := "101";
   signal Sum     : std_logic_vector(2 downto 0);
   signal Cout    : std_logic;
-
   constant CLK_PERIOD : time := 10 ns;
 
 begin
@@ -45,27 +44,22 @@ begin
     ResetN <= '0';
     wait for CLK_PERIOD * 2;
     ResetN <= '1';
-    
     -- NOTE(acol): Up count with wrap
     CountEn <= '1';
     Up <= '1';
     Modulo <= "101"; 
     wait for CLK_PERIOD * 7; 
-
     -- NOTE(acol): Down count with wrap
     Up <= '0';
     wait for CLK_PERIOD * 4;
-
     -- NOTE(acol): Modulo dynamic change
     Modulo <= "011"; 
     Up <= '1';
     wait for CLK_PERIOD * 5;
-
     -- NOTE(acol): Disable
     CountEn <= '0';
     wait for CLK_PERIOD * 3;
 
     wait;
   end process;
-
 end Simulation;
