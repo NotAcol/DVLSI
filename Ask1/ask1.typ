@@ -181,7 +181,7 @@
 ενεργοποιεί μόνο μία από τις εξόδους.
 
 #figure(
-  image("./assets/1.1.png", width:80%),
+  image("./assets/1.1.png", width:70%),
   caption: [RTL]
 )
 
@@ -202,7 +202,7 @@
 #raw(read("./vhdl/decoder_behavioral_bench.vhd"), lang: "vhdl")
 
 #figure(
-  image("./assets/1.1_bench.png", width:80%),
+  image("./assets/1.1_bench.png", width:100%),
   caption: [Test Bench]
 )
 
@@ -211,20 +211,28 @@
 4bit μέσω του I και μια συριακή μέσω του SerIn. Τα σήματα έλεγχου του είναι το reset που
 τον επαναφέρει στο 0 ασύγχρονα, το load που ελέγχει την παράλληλη είσοδο, το enable
 που ελέγχει την σειριακή λειτουργία του κυκλώματος και το slide bit που ελέγχει την
-κατεύθυνση της ολίσθησης.
+κατεύθυνση της ολίσθησης ασύγχρονα.
 
-// TODO(acol): RTL
+#figure(
+  image("./assets/1.2.png", width:100%),
+  caption: [RTL]
+)
 
 === Implementation
 #raw(read("./vhdl/shift_register.vhd"), lang: "vhdl")
 
 === Test Bench
-Φορτώνουμε τον αριθμό 1010 και κάνουμε αριστερό slide για 2 cycles ενώ φορτώνουμε δυο
-0 μέσω του SerIn και μετά κάνουμε δυο cycles slide δεξιά. Οι αναμενόμενες τιμές του ouput
-είναι 10 κατά το αριστερό slide και 00 για το δεξί (θα διαβάσουμε τα μηδέν που προσθέσαμε
-μέσω του serial input).
+Φορτώνουμε τον αριθμό '1010' μέσω του load και κάνουμε αριστερό slide για 3 cycles 
+φορτώνοντας 4 '1' μέσω του SerIn και μετά κάνουμε δυο cycles slide δεξιά περιμένοντας
+να δούμε τους άσους που φορτώσαμε στα register. Τα input δίνονται στο falling edge
+ενώ το σύστημα κάνει update στο rising edge.
 
 #raw(read("./vhdl/shift_register_bench.vhd"), lang: "vhdl")
-// TODO(acol): caption: [Test Bench]
 
-Παρατηρούμε ότι το output είναι το αναμενόμενο 1000!
+#figure(
+  image("./assets/1.2_bench.png", width:100%),
+  caption: [Test Bench]
+)
+
+== Μετρητής
+

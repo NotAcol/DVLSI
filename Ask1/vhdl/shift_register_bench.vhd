@@ -5,7 +5,6 @@ entity Tb is
 end entity;
 
 architecture zzz of Tb is
-
   component ShiftRegister
    Port(
      Clk, Reset, Load, Enable, SerIn, SlideDir: in std_logic;
@@ -22,45 +21,41 @@ architecture zzz of Tb is
   signal SerIn:     std_logic;
   signal I:         std_logic_vector(3 downto 0);
   signal O:         std_logic;
-
   constant CLOCK_PERIOD : time := 10 ns;
 
-  begin
-    Dut: ShiftRegister port map (
-      Clk       => Clk,
-      Load      => Load,
-      Reset     => Reset,
-      Enable    => Enable,
-      SlideDir  => SlideDir,
-      SerIn     => SerIn,
-      I         => I,
-      O         => O
-    );
+begin
+  Dut: ShiftRegister port map (
+    Clk       => Clk,
+    Load      => Load,
+    Reset     => Reset,
+    Enable    => Enable,
+    SlideDir  => SlideDir,
+    SerIn     => SerIn,
+    I         => I,
+    O         => O
+  );
 
-    Clk <= not Clk after CLOCK_PERIOD / 2;
+  Clk <= not Clk after CLOCK_PERIOD / 2;
 
-    Test: process begin
-      Load <= '1';
-      Reset <= '0';
-      Enable <= '1';
-      SlideDir <= '0';
-      SerIn <= '1';
-      I <= "1010";
+  Test: process begin
+    Load <= '1';
+    Reset <= '0';
+    Enable <= '1';
+    SlideDir <= '0';
+    SerIn <= '1';
+    I <= "1010";
 
     wait until falling_edge(Clk);
     Load <= '0';
-
     wait until falling_edge(Clk);
     wait until falling_edge(Clk);
     wait until falling_edge(Clk);
     SerIn <= '0';
     SlideDir <='1';
-
     wait until falling_edge(Clk);
     wait until falling_edge(Clk);
     Reset<='1';
 
     wait;
   end process;
-
 end architecture;
