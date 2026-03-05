@@ -54,7 +54,7 @@ begin
 
     -- NOTE(acol): Down count with wrap
     Up <= '0';
-    wait for CLK_PERIOD * 6;
+    wait for CLK_PERIOD * 4;
 
     -- NOTE(acol): Modulo dynamic change
     Modulo <= "011"; 

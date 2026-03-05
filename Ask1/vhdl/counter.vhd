@@ -25,7 +25,7 @@ begin
       if CountEn = '1' then
 
         if Up = '1' then
-          -- NOTE(acol): Up Count needs >= to handle dynamic modulo changing
+          -- Up Count
           if Count >= unsigned(Modulo) - 1 then 
             Count <= (others => '0');
           else
