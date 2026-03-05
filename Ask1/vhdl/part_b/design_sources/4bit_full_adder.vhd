@@ -24,7 +24,7 @@ begin
   C(0) <= Cin;
   Cout <= C(4);
 
-  Gen_FA for i in 0 to 3 generate
+  Gen_FA: for i in 0 to 3 generate
     FAInstance: FullAdder port map (
       A    => A(i),
       B    => B(i),

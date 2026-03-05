@@ -17,7 +17,7 @@ architecture Simulation of FullAdder4_Tb is
   end component;
 
   signal A, B : std_logic_vector(3 downto 0) := (others => '0');
-  signal Cin  : std_logic := '1';
+  signal Cin  : std_logic := '0';
   signal Sum  : std_logic_vector(3 downto 0);
   signal Cout : std_logic;
 begin
@@ -38,8 +38,8 @@ begin
           B <= std_logic_vector(to_unsigned(j, 4));
           wait for 10 ns;
 
-        end loop;
       end loop;
+      Cin <= not Cin;
     end loop;
     wait;
   end process;

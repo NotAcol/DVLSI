@@ -16,7 +16,7 @@ architecture Simulation of BCD4_Tb is
 
   signal A, B : std_logic_vector(15 downto 0) := (others => '0');
   signal Cin  : std_logic := '0';
-  signal Sum  : std_logic_vector(15 standard_logic_vector);
+  signal Sum  : std_logic_vector(15 downto 0);
   signal Cout : std_logic;
 begin
 

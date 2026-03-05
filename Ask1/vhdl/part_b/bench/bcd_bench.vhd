@@ -36,7 +36,12 @@ begin
           
           A   <= std_logic_vector(to_unsigned(i, 4));
           B   <= std_logic_vector(to_unsigned(j, 4));
-          Cin <= k;
+          -- NOTE(acol): Cin <= k; doesnt work...........
+          if k = 1 then
+            Cin <= '1';
+          else 
+            Cin <= '0';
+          end if;
           wait for 10 ns;
           
         end loop;

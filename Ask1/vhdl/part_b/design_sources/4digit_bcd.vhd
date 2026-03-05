@@ -31,7 +31,7 @@ begin
       A    => A(i * 4 + 3 downto i * 4),
       B    => B(i * 4 + 3 downto i * 4), 
       Cin  => C(i),
-      Sum  => S(i * 4 + 3 downto i * 4),
+      Sum  => Sum(i * 4 + 3 downto i * 4),
       Cout => C(i + 1)
     );
   end generate Gen_BCD;
