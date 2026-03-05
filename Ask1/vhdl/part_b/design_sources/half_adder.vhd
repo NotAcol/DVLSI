@@ -12,4 +12,4 @@ architecture Dataflow of HalfAdder is
 begin
   C <= A and B;
   S <= A xor B;
-end Dataflow
+end architecture;
