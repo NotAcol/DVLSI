@@ -25,8 +25,8 @@ begin
       if CountEn = '1' then
 
         if Up = '1' then
-          -- Up Count
-          if Count = unsigned(Modulo) - 1 then 
+          -- NOTE(acol): Up Count needs >= to handle dynamic modulo changing
+          if Count >= unsigned(Modulo) - 1 then 
             Count <= (others => '0');
           else
             Count <= Count + 1;
@@ -46,6 +46,8 @@ begin
   end process;
 
   Sum <= std_logic_vector(Count);
-  Cout <= '1' when (Count = unsigned(Modulo) - 1 and CountEn = '1' and Up = '1') else '0';
+  Cout <= '1' when (Count = unsigned(Modulo) - 1 and CountEn = '1' and Up = '1') else 
+          '1' when (Count = 0 and CountEn = '1' and Up = '0') else
+          '0';
 
 end architecture;
