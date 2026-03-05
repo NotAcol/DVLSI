@@ -278,3 +278,102 @@
 
 #pagebreak()
 = Μέρος B
+
+== Half Adder
+Ο half adder είναι ένα πολύ απλό κύκλωμα που περιγράφεται εξολοκλήρου από τις λογικές
+συναρτήσεις $C_(o u t) = A and B$ και $S = A xor B$.
+#figure(
+  image("./assets/2.1.png", width:70%),
+  caption: [RTL]
+)
+
+=== Implementation
+#raw(read("./vhdl/part_b/design_sources/half_adder.vhd"), lang: "vhdl")
+
+Το οποίο μας δίνει στο critical path του synthesis 5.377ns.
+#figure(
+  image("./assets/2.1_critical_path_5.377.png", width:100%),
+  caption: [Critical Path 5.377]
+)
+=== Test Bench
+Μπορούμε να εξετάσουμε διεξοδικά τον πίνακα αληθείας.
+#raw(read("./vhdl/part_b/bench/half_adder_bench.vhd"), lang: "vhdl")
+
+#figure(
+  image("./assets/2.1_bench.png", width: 80%),
+  caption: [Test Bench]
+)
+
+== Full Adder
+Για να δημιουργήσουμε έναν Full Adder χρησιμοποιούμε δυο Half Adder σε σειρά και
+συνδέουμε τα $C_(o u t)$ με μια πύλη or.
+
+#figure(
+  image("./assets/2.2.png", width: 80%),
+  caption: [RTL]
+)
+
+=== Implementation
+#raw(read("./vhdl/part_b/design_sources/full_adder.vhd"), lang: "vhdl")
+
+Το οποίο μας δίνει στο critical path του synthesis 5.377ns, το ίδιο με τον half adder.
+#figure(
+  image("./assets/2.2_critical_path_5.377.png", width:85%),
+  caption: [Critical Path 5.377]
+)
+
+=== Test Bench
+Μπορούμε να εξετάσουμε διεξοδικά τον πίνακα αληθείας.
+#raw(read("./vhdl/part_b/bench/full_adder_bench.vhd"), lang: "vhdl")
+
+#figure(
+  image("./assets/2.2_bench.png", width:85%),
+  caption: [Test Bench]
+)
+
+== 4 Bit Full Adder
+Υποθέτουμε εδώ ότι ο αθροιστής που ζητείται είναι τύπου ripple carry. Αρκεί να
+συνδέσουμε σε σειρά τα carry τεσσάρων full adder.
+//TODO
+
+=== Implementation
+#raw(read("./vhdl/part_b/design_sources/4bit_full_adder.vhd"), lang: "vhdl")
+//TODO
+
+=== Test Bench
+Μπορούμε να εξετάσουμε διεξοδικά τον πίνακα αληθείας.
+
+#raw(read("./vhdl/part_b/bench/4bit_full_adder_bench.vhd"), lang: "vhdl")
+//TODO
+
+== BCD
+Το κύκλωμα κάνει πρόσθεση δυο δεκαδικών αριθμών σε δυαδική αναπαράσταση με χρήση
+δυο Full Adder των 4bit. Ανιχνεύει όταν το άθροισμα είναι πάνω από 9 και προσθέτει 6
+στον δεύτερο Full Adder 4bit αλλιώς προσθέτει 0.
+//TODO
+
+=== Implementation
+#raw(read("./vhdl/part_b/design_sources/bcd.vhd"), lang: "vhdl")
+//TODO
+
+=== Test Bench
+Το Test Bench είναι παρόμοιο με του 4bit full adder μόνο που ελέγχουμε και για
+διάφορες τιμές του Cin.
+#raw(read("./vhdl/part_b/bench/bcd_bench.vhd"), lang: "vhdl")
+//TODO
+
+== 4 Digit BCD
+Για τον αθροιστή 4 δεκαδικών αριθμών θα χρησιμοποιήσουμε 4 κυκλώματα BCD και θα ενώσουμε σε
+σειρά τα $C_(o u t)$ τους με ανάλογο τρόπο του 4bit full adder.
+//TODO
+=== Implementation
+#raw(read("./vhdl/part_b/design_sources/4digit_bcd.vhd"), lang: "vhdl")
+
+//TODO
+
+=== Test Bench
+Δεν είναι δυνατό να ελέγξουμε όλες τις πιθανές τιμές, άρα θα κάνουμε probe edge
+cases.
+#raw(read("./vhdl/part_b/bench/4digit_bcd_bench.vhd"), lang: "vhdl")
+
+//TODO
