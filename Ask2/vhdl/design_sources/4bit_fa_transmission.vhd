@@ -12,7 +12,6 @@ entity FA4Transmission is
 end FA4Transmission;
 
 architecture Structural of FA4Transmission is
-
   component FA 
     Port(
       Clk, A, B, Cin : in std_logic;
