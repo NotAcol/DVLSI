@@ -16,7 +16,7 @@ begin
   process(Clk)
     if rising_edge(Clk) then
       Sum <= A xor B xor Cin;
-      Cout <= (A and B) or (Cin and (A xor B));
+      Cout <= (A and B) or (Cin and A) or (Cin and B);
     end if;
   end process;
 end architecture;

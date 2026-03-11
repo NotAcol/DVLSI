@@ -27,7 +27,7 @@ architecture Behavioral of tb_FA is
 begin
   uut: FA PORT MAP (Clk, A, B, Cin, Sum, Cout);
 
-  -- Clock infinite loop
+  -- Clock inf loop
   process begin
     clk <= '0';
     wait for clk_period/2;
@@ -38,28 +38,20 @@ begin
   process begin
     A <= '0'; B <= '0'; Cin <= '0';
     wait for clk_period;
-
     A <= '0'; B <= '0'; Cin <= '1';
     wait for clk_period;
-
     A <= '0'; B <= '1'; Cin <= '0';
     wait for clk_period;
-
     A <= '0'; B <= '1'; Cin <= '1';
     wait for clk_period;
-
     A <= '1'; B <= '0'; Cin <= '0';
     wait for clk_period;
-
     A <= '1'; B <= '0'; Cin <= '1';
     wait for clk_period;
-
     A <= '1'; B <= '1'; Cin <= '0';
     wait for clk_period;
-
     A <= '1'; B <= '1'; Cin <= '1';
     wait for clk_period;
-
     wait;
   end process;
 end architecture;
