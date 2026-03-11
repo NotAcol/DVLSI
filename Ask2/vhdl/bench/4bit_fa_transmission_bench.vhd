@@ -6,7 +6,6 @@ entity tb_FA4Transmission is
 end tb_FA4Transmission;
 
 architecture behavior of tb_FA4Transmission is
-
   component FA4Transmission
     Port(
       Clk, Cin : in std_logic;
@@ -24,7 +23,6 @@ architecture behavior of tb_FA4Transmission is
   signal Cout : std_logic;
 
   constant clk_period : time := 10 ns;
-
 begin
 
   uut: FA4Transmission port map (
@@ -45,26 +43,20 @@ begin
 
   process begin
     wait for clk_period;
-
     -- Sum = 0101 Cout = 0
     A <= "0011"; B <= "0010"; Cin <= '0';
     wait for clk_period;
-
     -- Sum = 1110 Cout = 0
     A <= "0111"; B <= "0111"; Cin <= '0';
     wait for clk_period;
-
     -- Sum = 0000 Cout = 1
     A <= "1111"; B <= "0001"; Cin <= '0';
     wait for clk_period;
-
     -- Sum = 1111 Cout = 1
     A <= "1111"; B <= "1111"; Cin <= '1';
     wait for clk_period;
-
     -- flush pipeline
     A <= "0000"; B <= "0000"; Cin <= '0';
-    
     wait for clk_period * 5;
 
     wait;

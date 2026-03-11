@@ -43,12 +43,12 @@ begin
       Stage2Regs(0) <= Stage1Regs(0);
       Stage2Regs(3 downto 2) <= Stage1Regs(3 downto 2);
       Stage2Regs(5 downto 4) <= Stage1Regs(6 downto 5);
-      Stage1Regs(1) <= SumWires(1);
+      Stage2Regs(1) <= SumWires(1);
 
       Stage3Regs(1 downto 0) <= Stage2Regs(1 downto 0);
       Stage3Regs(3) <= Stage2Regs(3);
       Stage3Regs(4) <= Stage2Regs(5);
-      Stage1Regs(2) <= SumWires(2);
+      Stage3Regs(2) <= SumWires(2);
 
       Sum(2 downto 0) <= Stage3Regs(2 downto 0);
       Sum(3) <= SumWires(3);
