@@ -25,31 +25,33 @@ architecture Structural of FA4Transmission is
   signal Stage3Regs : std_logic_vector(4 downto 0);
 
   signal C : std_logic_vector(3 downto 0);
-  signal Erm : std_logic;
-
+  signal SumWires : std_logic_vector(3 downto 0);
 begin
 
-  FA0: FA port map (Clk, A(0), B(0), Cin, Stage1Regs(0), C(0));
-  FA1: FA port map (Clk, Stage1Regs(1), Stage1Regs(4), C(0), Stage2Regs(1), C(1));
-  FA2: FA port map (Clk, Stage2Regs(2), Stage2Regs(4), C(1), Stage3Regs(2), C(2));
-  FA3: FA port map (Clk, Stage3Regs(3), Stage3Regs(4), C(2), Erm, C(3));
+  FA0: FA port map (Clk, A(0), B(0), Cin, SumWires(0), C(0));
+  FA1: FA port map (Clk, Stage1Regs(1), Stage1Regs(4), C(0), SumWires(1), C(1));
+  FA2: FA port map (Clk, Stage2Regs(2), Stage2Regs(4), C(1), SumWires(2), C(2));
+  FA3: FA port map (Clk, Stage3Regs(3), Stage3Regs(4), C(2), SumWires(3), C(3));
 
   process(Clk) begin
     if rising_edge(Clk) then
-
+        
       Stage1Regs(3 downto 1) <= A(3 downto 1);
       Stage1Regs(6 downto 4) <= B(3 downto 1);
+      Stage1Regs(0) <= SumWires(0);
 
       Stage2Regs(0) <= Stage1Regs(0);
       Stage2Regs(3 downto 2) <= Stage1Regs(3 downto 2);
       Stage2Regs(5 downto 4) <= Stage1Regs(6 downto 5);
+      Stage1Regs(1) <= SumWires(1);
 
       Stage3Regs(1 downto 0) <= Stage2Regs(1 downto 0);
       Stage3Regs(3) <= Stage2Regs(3);
       Stage3Regs(4) <= Stage2Regs(5);
-      
+      Stage1Regs(2) <= SumWires(2);
+
       Sum(2 downto 0) <= Stage3Regs(2 downto 0);
-      Sum(3) <= Erm;
+      Sum(3) <= SumWires(3);
       Cout <= C(3);
 
     end if;

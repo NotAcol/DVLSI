@@ -13,7 +13,7 @@ end FA;
 architecture Behavioral of FA is
 begin
 
-  process(Clk)
+  process(Clk) begin
     if rising_edge(Clk) then
       Sum <= A xor B xor Cin;
       Cout <= (A and B) or (Cin and A) or (Cin and B);

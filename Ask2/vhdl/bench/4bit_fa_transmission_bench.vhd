@@ -2,12 +2,12 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity tb_FA4Transmision is
-end tb_FA4Transmision;
+entity tb_FA4Transmission is
+end tb_FA4Transmission;
 
-architecture behavior of tb_FA4Transmision is
+architecture behavior of tb_FA4Transmission is
 
-  component FA4Transmision
+  component FA4Transmission
     Port(
       Clk, Cin : in std_logic;
       A, B     : in std_logic_vector(3 downto 0);
@@ -27,7 +27,7 @@ architecture behavior of tb_FA4Transmision is
 
 begin
 
-  uut: FA4Transmision port map (
+  uut: FA4Transmission port map (
     Clk  => Clk,
     Cin  => Cin,
     A    => A,
