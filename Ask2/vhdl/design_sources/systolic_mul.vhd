@@ -110,84 +110,81 @@ architecture Structural of SystolicMultiplier4Bit is
 
   component FAHelperLane
     Port(
-      Clk, Bin, Cin : in  std_logic;
-      Ain, Sin      : in  std_logic_vector(3 downto 0);
-      Aout, Sout    : out std_logic_vector(3 downto 0);
-      Cout          : out std_logic
+      Clk  : in  std_logic;
+      Bin  : in  std_logic;
+      Cin  : in  std_logic;
+      Ain  : in  std_logic_vector(3 downto 0);
+      Sin  : in  std_logic_vector(3 downto 0);
+      Aout : out std_logic_vector(3 downto 0);
+      Sout : out std_logic_vector(3 downto 0);
+      Cout : out std_logic
     );
   end component;
-  
-  -- maybe generate ?
-  signal Row0Aout : std_logic_vector(3 downto 0);
-  signal Row0Sout : std_logic_vector(3 downto 0);
-  signal Row0Cout : std_logic;
 
-  signal Row1Sin  : std_logic_vector(3 downto 0);
-  signal Row1Aout : std_logic_vector(3 downto 0);
-  signal Row1Sout : std_logic_vector(3 downto 0);
-  signal Row1Cout : std_logic;
+  type VectorArray is array (0 to 4) of std_logic_vector(3 downto 0);
+  type BitArray    is array (0 to 4) of std_logic;
+  type Array4Bit   is array (0 to 6) of std_logic_vector(3 downto 0);
+  type Array8Bit   is array (0 to 9) of std_logic_vector(7 downto 0);
 
-  signal Row2Sin  : std_logic_vector(3 downto 0);
-  signal Row2Aout : std_logic_vector(3 downto 0);
-  signal Row2Sout : std_logic_vector(3 downto 0);
-  signal Row2Cout : std_logic;
+  signal RowAin, RowAout, RowSin, RowSout : VectorArray := (others => (others => '0'));
+  signal RowCout                          : BitArray    := (others => '0');
 
-  signal Row3Sin  : std_logic_vector(3 downto 0);
-  signal Row3Aout : std_logic_vector(3 downto 0);
-  signal Row3Sout : std_logic_vector(3 downto 0);
-  signal Row3Cout : std_logic;
-
-  signal P0Delay1, P0Delay2, P0Delay3 : std_logic := '0';
-  signal P1Delay1, P1Delay2           : std_logic := '0';
-  signal P2Delay1                     : std_logic := '0';
+  signal ASkew   : Array4Bit := (others => "0000");
+  signal BSkew   : Array4Bit := (others => "0000");
+  signal PDeskew : Array8Bit := (others => "00000000");
 
 begin
-  Lane0: FAHelperLane port map (
-    Clk, B(0), '0', A, "0000", Row0Aout, Row0Sout, Row0Cout
-  );
-
-  Row1Sin(2 downto 0) <= Row0Sout(3 downto 1);
-  Row1Sin(3)          <= Row0Cout;
-
-  Lane1: FAHelperLane port map ( 
-    Clk, B(1), '0', Row0Aout, Row1Sin, Row1Aout, Row1Sout, Row1Cout
-  );
-
-  Row2Sin(2 downto 0) <= Row1Sout(3 downto 1);
-  Row2Sin(3)          <= Row1Cout;
-
-  Lane2: FAHelperLane port map ( 
-    Clk, B(2), '0', Row1Aout, Row2Sin, Row2Aout, Row2Sout, Row2Cout
-  );
-
-  Row3Sin(2 downto 0) <= Row2Sout(3 downto 1);
-  Row3Sin(3)          <= Row2Cout;
-
-  Lane3: FAHelperLane port map ( 
-    Clk, B(3), '0', Row2Aout, Row3Sin, Row3Aout, Row3Sout, Row3Cout
-  );
-
-  -- Delays
   process(Clk) begin
+    -- Stagger grids
     if rising_edge(Clk) then
-      P0Delay1 <= Row0Sout(0);
-      P0Delay2 <= P0Delay1;
-      P0Delay3 <= P0Delay2;
+      -- A B skew grid inputs
+      ASkew(0) <= A;
+      BSkew(0) <= B;
+      -- A B skew grid progression
+      for i in 0 to 5 loop
+        ASkew(i+1) <= ASkew(i);
+        BSkew(i+1) <= BSkew(i);
+      end loop;
 
-      P1Delay1 <= Row1Sout(0);
-      P1Delay2 <= P1Delay1;
+      -- Product deskew grid inputs
+      PDeskew(0)(0) <= RowSout(0)(0);
+      PDeskew(0)(1) <= RowSout(1)(0);
+      PDeskew(0)(2) <= RowSout(2)(0);
+      PDeskew(0)(3) <= RowSout(3)(0);
+      PDeskew(0)(4) <= RowSout(3)(1);
+      PDeskew(0)(5) <= RowSout(3)(2);
+      PDeskew(0)(6) <= RowSout(3)(3);
+      PDeskew(0)(7) <= RowCout(3);
+      -- Product deskew grid progression
+      for i in 0 to 8 loop
+        PDeskew(i+1) <= PDeskew(i);
+      end loop;
 
-      P2Delay1 <= Row2Sout(0);
     end if;
   end process;
 
-  Product(0) <= P0Delay3;
-  Product(1) <= P1Delay2;
-  Product(2) <= P2Delay1;
-  Product(3) <= Row3Sout(0);
-  Product(4) <= Row3Sout(1);
-  Product(5) <= Row3Sout(2);
-  Product(6) <= Row3Sout(3);
-  Product(7) <= Row3Cout;
+  -- Row 1 inputs
+  RowAin(0)  <= ASkew(3)(3) & ASkew(2)(2) & ASkew(1)(1) & ASkew(0)(0);
+  RowSin(0)  <= "0000";
 
-end architecture;
+  -- Row gen and connections
+  LaneGen: for i in 0 to 3 generate
+    LaneInst: FAHelperLane port map (
+      Clk, BSkew(i * 2)(i), '0', RowAin(i), RowSin(i), RowAout(i), RowSout(i), RowCout(i)
+    );
+
+    RowAin(i+1)             <= RowAout(i);
+    RowSin(i+1)(2 downto 0) <= RowSout(i)(3 downto 1);
+    RowSin(i+1)(3)          <= RowCout(i);
+  end generate LaneGen;
+
+  -- Outputs
+  Product(0) <= PDeskew(9)(0);
+  Product(1) <= PDeskew(7)(1);
+  Product(2) <= PDeskew(5)(2);
+  Product(3) <= PDeskew(3)(3);
+  Product(4) <= PDeskew(2)(4);
+  Product(5) <= PDeskew(1)(5);
+  Product(6) <= PDeskew(0)(6);
+  Product(7) <= PDeskew(0)(7);
+end Structural;
