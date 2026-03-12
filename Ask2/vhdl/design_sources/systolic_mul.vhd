@@ -72,23 +72,26 @@ architecture Structural of FAHelperLane is
     );
   end component;
 
-  -- B(4) isn't read  
+  -- B(4) is dead code eliminated
   signal C, B : std_logic_vector(4 downto 0) := (others => '0');
 
 begin
-
   B(0) <= Bin;
   C(0) <= Cin;
-  Cout <= C(4);
 
   LaneGen: for i in 0 to 3 generate
     Cell: FAHelper port map (
       Clk, Ain(i), B(i), Sin(i), C(i), Sout(i), C(i + 1), Aout(i), B(i + 1)
     );
   end generate LaneGen;
+  
+  -- stagger last output
+  process(Clk) begin
+    if rising_edge(Clk) then
+      Cout <= C(4);
+    end if;
+  end process;
 end architecture;
-
-
 
 
 ------------------------------------------------------------------------------
