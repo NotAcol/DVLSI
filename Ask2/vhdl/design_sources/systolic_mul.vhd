@@ -157,7 +157,6 @@ begin
       PDeskew(0)(4) <= RowSout(3)(1);
       PDeskew(0)(5) <= RowSout(3)(2);
       PDeskew(0)(6) <= RowSout(3)(3);
-      PDeskew(0)(7) <= RowCout(3);
       -- Product deskew grid progression
       for i in 0 to 8 loop
         PDeskew(i+1) <= PDeskew(i);
@@ -189,5 +188,5 @@ begin
   Product(4) <= PDeskew(2)(4);
   Product(5) <= PDeskew(1)(5);
   Product(6) <= PDeskew(0)(6);
-  Product(7) <= PDeskew(0)(7);
+  Product(7) <= RowCout(3);
 end Structural;
