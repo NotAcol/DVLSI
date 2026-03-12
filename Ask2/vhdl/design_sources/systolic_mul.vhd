@@ -58,7 +58,7 @@ entity FAHelperLane is
     Aout, Sout    : out std_logic_vector(3 downto 0);
     Cout          : out std_logic
   );
-end FAHelperLange;
+end FAHelperLane;
 
 architecture Structural of FAHelperLane is
   component FAHelper
@@ -86,7 +86,7 @@ begin
       Clk, Ain(i), B(i), Sin(i), C(i), Sout(i), C(i + 1), Aout(i), B(i + 1)
     );
   end generate LaneGen;
-end architecture
+end architecture;
 
 
 
