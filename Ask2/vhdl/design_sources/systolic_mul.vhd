@@ -109,6 +109,9 @@ architecture Structural of SystolicMultiplier4Bit is
   signal Row3Sout : std_logic_vector(3 downto 0);
   signal Row3Cout : std_logic;
 
+  signal ToP1 : std_logic;
+  signal ToP2 : std_logic_vector(1 downto 0);
+  signal ToP3 : std_logic_vector(2 downto 0);
   signal PReg : std_logic_vector(7 downto 0) := (others => '0');
 
 begin
@@ -123,16 +126,21 @@ begin
       -- And shift
       Reg1Sin(2 downto 0) <= Row0Sout(3 downto 1);
       Reg1Sin(3)          <= Row0Cout;
+      ToP1 <= Row0Sout(0);
 
       Reg2Sin(2 downto 0) <= Row1Sout(3 downto 1);
       Reg2Sin(3)          <= Row1Cout;
+      ToP2(0) <= ToP1;
+      ToP2(1) <= Ro1Sout(0);
 
       Reg3Sin(2 downto 0) <= Row2Sout(3 downto 1);
       Reg3Sin(3)          <= Row2Cout;
+      ToP3(1 downto 0)    <= ToP2(1 downto 0);
+      ToP3(2) <= Row2Sout(0);
 
-      PReg(0) <= Row0Sout(0);
-      PReg(1) <= Row1Sout(0);
-      PReg(2) <= Row2Sout(0);
+      PReg(0) <= ToP3(0);
+      PReg(1) <= ToP3(1);
+      PReg(2) <= ToP3(2);
       PReg(3) <= Row3Sout(0);
       PReg(4) <= Row3Sout(1);
       PReg(5) <= Row3Sout(2);
