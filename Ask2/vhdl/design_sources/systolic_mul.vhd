@@ -1,17 +1,16 @@
+-- NOTE(acol): Helpers
+-------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- NOTE(acol): Helpers for generate loop
--------------------------------------------------------------------------------
 entity FAHelper is
   Port(
-    Clk  : in  std_logic;
-    A    : in  std_logic;
-    B    : in  std_logic;
-    Sin  : in  std_logic;
-    Cin  : in  std_logic;
-    Sout : out std_logic;
-    Cout : out std_logic
+    Clk, Ain, Bin : in std_logic;
+    Sin           : in  std_logic;
+    Cin           : in  std_logic;
+    Sout          : out std_logic;
+    Cout          : out std_logic;
+    Aout, Bout    : out std_logic
   );
 end FAHelper;
 
@@ -26,52 +25,78 @@ architecture Structural of FAHelper is
       Cout : out std_logic
     );
   end component;
+
   signal LocalProduct : std_logic;
+  signal ADelay : std_logic_vector(1 downto 0);
+  signal BDelay : std_logic;
 begin
-  LocalProduct <= A and B;
+  LocalProduct <= Ain and Bin;
   FA0: FA port map(Clk, LocalProduct, Sin, Cin, Sout, Cout);
+
+  process(Clk) begin
+    if rising_edge(Clk) then
+      ADelay(0) <= Ain;
+      ADelay(1) <= ADelay(0);
+      
+      BDelay <= Bin;
+    end if;
+  end process;
+
+  Aout <= ADelay(1);
+  Bout <= BDelay;
+
 end Structural;
 
--- lane of helpers
+-- Helper lane
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
 entity FAHelperLane is
   Port(
-    Clk   : in  std_logic;
-    A     : in  std_logic_vector(3 downto 0); 
-    B_bit : in  std_logic;                    
-    Sin   : in  std_logic_vector(3 downto 0); 
-    Cin   : in  std_logic;                    
-    Sout  : out std_logic_vector(3 downto 0); 
-    Cout  : out std_logic                     
+    Clk, Bin, Cin : in std_logic;
+    Ain, Sin      : in std_logic_vector(3 downto 0);
+    Aout, Sout    : out std_logic_vector(3 downto 0);
+    Cout          : out std_logic
   );
-end FAHelperLane;
+end FAHelperLange;
 
 architecture Structural of FAHelperLane is
   component FAHelper
     Port(
-      Clk  : in  std_logic;
-      A    : in  std_logic;
-      B    : in  std_logic;
-      Sin  : in  std_logic;
-      Cin  : in  std_logic;
-      Sout : out std_logic;
-      Cout : out std_logic
+      Clk, Ain, Bin : in std_logic;
+      Sin           : in  std_logic;
+      Cin           : in  std_logic;
+      Sout          : out std_logic;
+      Cout          : out std_logic;
+      Aout, Bout    : out std_logic
     );
   end component;
 
-  -- internal ripple carry
-  signal C : std_logic_vector(4 downto 0) := (others => '0');
+  -- B(4) isn't read  
+  signal C, B : std_logic_vector(4 downto 0) := (others => '0');
 
 begin
-  LaneGen: for i in 0 to 3 generate
-    Cell: FAHelper port map (Clk, A(i), B_bit, Sin(i), C(i), Sout(i), C(i+1));
-  end generate LaneGen;
 
+  B(0) <= Bin;
   C(0) <= Cin;
   Cout <= C(4);
-end Structural;
+
+  LaneGen: for i in 0 to 3 generate
+    Cell: FAHelper port map (
+      Clk, Ain(i), B(i), Sin(i), C(i), Sout(i), C(i + 1), Aout(i), B(i + 1)
+    );
+  end generate LaneGen;
+end architecture
+
+
+
+
 ------------------------------------------------------------------------------
 
 -- NOTE(acol): Multiplier implementation
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
 entity SystolicMultiplier4Bit is
   Port(
     Clk     : in  std_logic;
@@ -82,72 +107,87 @@ entity SystolicMultiplier4Bit is
 end SystolicMultiplier4Bit;
 
 architecture Structural of SystolicMultiplier4Bit is
+
   component FAHelperLane
     Port(
-      Clk   : in  std_logic;
-      A     : in  std_logic_vector(3 downto 0);
-      B_bit : in  std_logic;
-      Sin   : in  std_logic_vector(3 downto 0);
-      Cin   : in  std_logic;
-      Sout  : out std_logic_vector(3 downto 0);
-      Cout  : out std_logic
+      Clk, Bin, Cin : in  std_logic;
+      Ain, Sin      : in  std_logic_vector(3 downto 0);
+      Aout, Sout    : out std_logic_vector(3 downto 0);
+      Cout          : out std_logic
     );
   end component;
-
+  
+  -- maybe generate ?
+  signal Row0Aout : std_logic_vector(3 downto 0);
   signal Row0Sout : std_logic_vector(3 downto 0);
   signal Row0Cout : std_logic;
 
-  signal Reg1Sin  : std_logic_vector(3 downto 0) := (others => '0');
+  signal Row1Sin  : std_logic_vector(3 downto 0);
+  signal Row1Aout : std_logic_vector(3 downto 0);
   signal Row1Sout : std_logic_vector(3 downto 0);
   signal Row1Cout : std_logic;
 
-  signal Reg2Sin  : std_logic_vector(3 downto 0) := (others => '0');
+  signal Row2Sin  : std_logic_vector(3 downto 0);
+  signal Row2Aout : std_logic_vector(3 downto 0);
   signal Row2Sout : std_logic_vector(3 downto 0);
   signal Row2Cout : std_logic;
 
-  signal Reg3Sin  : std_logic_vector(3 downto 0) := (others => '0');
+  signal Row3Sin  : std_logic_vector(3 downto 0);
+  signal Row3Aout : std_logic_vector(3 downto 0);
   signal Row3Sout : std_logic_vector(3 downto 0);
   signal Row3Cout : std_logic;
 
-  signal ToP1 : std_logic;
-  signal ToP2 : std_logic_vector(1 downto 0);
-  signal ToP3 : std_logic_vector(2 downto 0);
-  signal PReg : std_logic_vector(7 downto 0) := (others => '0');
+  signal P0Delay1, P0Delay2, P0Delay3 : std_logic := '0';
+  signal P1Delay1, P1Delay2           : std_logic := '0';
+  signal P2Delay1                     : std_logic := '0';
 
 begin
-  -- Add
-  Lane0: FAHelperLane port map (Clk, A, B(0), "0000",  '0', Row0Sout, Row0Cout);
-  Lane1: FAHelperLane port map (Clk, A, B(1), Reg1Sin, '0', Row1Sout, Row1Cout);
-  Lane2: FAHelperLane port map (Clk, A, B(2), Reg2Sin, '0', Row2Sout, Row2Cout);
-  Lane3: FAHelperLane port map (Clk, A, B(3), Reg3Sin, '0', Row3Sout, Row3Cout);
+  Lane0: FAHelperLane port map (
+    Clk, B(0), '0', A, "0000", Row0Aout, Row0Sout, Row0Cout
+  );
 
+  Row1Sin(2 downto 0) <= Row0Sout(3 downto 1);
+  Row1Sin(3)          <= Row0Cout;
+
+  Lane1: FAHelperLane port map ( 
+    Clk, B(1), '0', Row0Aout, Row1Sin, Row1Aout, Row1Sout, Row1Cout
+  );
+
+  Row2Sin(2 downto 0) <= Row1Sout(3 downto 1);
+  Row2Sin(3)          <= Row1Cout;
+
+  Lane2: FAHelperLane port map ( 
+    Clk, B(2), '0', Row1Aout, Row2Sin, Row2Aout, Row2Sout, Row2Cout
+  );
+
+  Row3Sin(2 downto 0) <= Row2Sout(3 downto 1);
+  Row3Sin(3)          <= Row2Cout;
+
+  Lane3: FAHelperLane port map ( 
+    Clk, B(3), '0', Row2Aout, Row3Sin, Row3Aout, Row3Sout, Row3Cout
+  );
+
+  -- Delays
   process(Clk) begin
     if rising_edge(Clk) then
-      -- And shift
-      Reg1Sin(2 downto 0) <= Row0Sout(3 downto 1);
-      Reg1Sin(3)          <= Row0Cout;
-      ToP1 <= Row0Sout(0);
+      P0Delay1 <= Row0Sout(0);
+      P0Delay2 <= P0Delay1;
+      P0Delay3 <= P0Delay2;
 
-      Reg2Sin(2 downto 0) <= Row1Sout(3 downto 1);
-      Reg2Sin(3)          <= Row1Cout;
-      ToP2(0) <= ToP1;
-      ToP2(1) <= Ro1Sout(0);
+      P1Delay1 <= Row1Sout(0);
+      P1Delay2 <= P1Delay1;
 
-      Reg3Sin(2 downto 0) <= Row2Sout(3 downto 1);
-      Reg3Sin(3)          <= Row2Cout;
-      ToP3(1 downto 0)    <= ToP2(1 downto 0);
-      ToP3(2) <= Row2Sout(0);
-
-      PReg(0) <= ToP3(0);
-      PReg(1) <= ToP3(1);
-      PReg(2) <= ToP3(2);
-      PReg(3) <= Row3Sout(0);
-      PReg(4) <= Row3Sout(1);
-      PReg(5) <= Row3Sout(2);
-      PReg(6) <= Row3Sout(3);
-      PReg(7) <= Row3Cout;
+      P2Delay1 <= Row2Sout(0);
     end if;
   end process;
 
-  Product <= PReg;
-end Structural;
+  Product(0) <= P0Delay3;
+  Product(1) <= P1Delay2;
+  Product(2) <= P2Delay1;
+  Product(3) <= Row3Sout(0);
+  Product(4) <= Row3Sout(1);
+  Product(5) <= Row3Sout(2);
+  Product(6) <= Row3Sout(3);
+  Product(7) <= Row3Cout;
+
+end architecture;
