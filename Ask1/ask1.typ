@@ -168,6 +168,10 @@
       //sn: "el15208",
       email: "personal@devcol.com"
     ),
+    (
+      name: "Νικόλας Νεοφύτου 03122632",
+      email: ""
+    ),
   )
 )
 
