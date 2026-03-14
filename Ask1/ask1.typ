@@ -15,6 +15,8 @@
 #let teal_color = rgb("#94e2d5")
 #let subtext_color = rgb("#bac2de")
 #let surface_color = rgb("#313244")
+#let crust_color = rgb("#11111b")
+#let mantle_color = rgb("#181825")
 
 #set text(
   font: "New Computer Modern",
@@ -32,6 +34,12 @@
 #set table(stroke: text_color)
 #set quote(block:true )
 #set raw(block:true, theme: "/mocha.tmTheme", syntaxes: "VHDL.sublime-syntax")
+#show raw: set text(size: 8.5pt)
+#show raw.where(block: true): block.with(
+  fill: mantle_color,
+  inset: 10pt,
+  radius: 4pt,
+)
 #set bibliography(style: "ieee")
 #set terms(separator: [: ])
 #set figure(gap: 1em)
