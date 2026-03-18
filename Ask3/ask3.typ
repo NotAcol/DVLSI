@@ -227,12 +227,12 @@ $
 στο X μέχρι την ram και σε όλα τα σήματα από την cu στον mac.
 #raw(read("./vhdl/design_sources/FIR.vhd"), lang: "vhdl")
 
-Τελικά, όλο αυτό μας δίνει στο implementation critical path 6.975ns και άρα συχνότητα
-$f approx 143 "MHz"$
+Τελικά, όλο αυτό μας δίνει στο implementation critical path 6.807ns και άρα συχνότητα
+$f approx 146.9 "MHz"$
 
 #figure(
-  image("./assets/critical_path_real_6.974.png", width:90%),
-  caption: [Critical path 6.975]
+  image("./assets/critical_path_but_frfr_this_time_6.807.png", width:90%),
+  caption: [Critical path 6.807]
 )
 και utilization
 
