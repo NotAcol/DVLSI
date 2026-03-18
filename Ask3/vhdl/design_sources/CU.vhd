@@ -50,5 +50,5 @@ begin
   end process;
 
   RamAddress <= Counter;
-  RomAddress <= not Counter;
+  RomAddress <= Counter;
 end architecture;

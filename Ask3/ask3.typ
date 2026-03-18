@@ -197,11 +197,6 @@
 ήταν ξεκάθαρο από την εκφώνηση τι πρέπει να είναι το output μετά από ένα write οπότε
 άπλα δίνει ότι διεύθυνση παίρνει στην είσοδο.
 #raw(read("./vhdl/design_sources/memories.vhd"), lang: "vhdl")
-//
-//#figure(
-//  image("./assets/1_critical_path_4.076.png", width:70%),
-//  caption: [Critical path 4.076]
-//)
 
 = Multiplier Accumulator
 Για τον αριθμό bit του MAC ισχύει ότι
@@ -215,13 +210,53 @@ $
 #raw(read("./vhdl/design_sources/mac.vhd"), lang: "vhdl")
 
 = Control Unit
-Το μόνο που ίσως να αξίζει σχολιασμό είναι ότι μπορούμε να γράψουμε το 
-`"111" - Counter` ως συμπλήρωμα και ότι υπερισχύει το τελευταίο assignment οπότε
-μπορούμε να κάνουμε πάντα αρχικοποίηση των σημάτων σε default και μετά να τα
+Το μόνο που ίσως να αξίζει σχολιασμό είναι ότι υπερισχύει το τελευταίο assignment
+οπότε μπορούμε να κάνουμε πάντα αρχικοποίηση των σημάτων σε default και μετά να τα
 αλλάζουμε, αλλιώς το κύκλωμα είναι πολύ απλό.
 #raw(read("./vhdl/design_sources/CU.vhd"), lang: "vhdl")
 
 = FIR
+
+#figure(
+  image("./assets/RTL.png", width:90%),
+  caption: [RTL]
+)
+
+== Implementation
 Για το τελικό σχέδιο συνδέουμε όλα τα παραπάνω components και προσθέτουμε καθυστέρηση
 στο X μέχρι την ram και σε όλα τα σήματα από την cu στον mac.
 #raw(read("./vhdl/design_sources/FIR.vhd"), lang: "vhdl")
+
+Τελικά, όλο αυτό μας δίνει στο implementation critical path 6.975ns και άρα συχνότητα
+$f approx 143 "MHz"$
+
+#figure(
+  image("./assets/critical_path_real_6.974.png", width:90%),
+  caption: [Critical path 6.975]
+)
+και utilization
+
+#figure(
+  image("./assets/util.png", width:80%),
+)
+
+#figure(
+  image("./assets/util_percent.png", width:80%),
+)
+
+== Test Bench
+Για δοκιμές επιλέχθηκαν δυο σήματα, μια Dirac και ένα unit step, οπότε περιμένουμε να
+δούμε κατά το πρώτο σήμα τα coefficients και κατά το δεύτερο περιμένουμε να δούμε ένα
+accumulation των τιμών του προηγουμένου.
+
+#raw(read("./vhdl/bench/fir_bench.vhd"), lang: "vhdl")
+
+#figure(
+  image("./assets/bench_1.png", width:100%),
+  caption: [Impulse Response]
+)
+
+#figure(
+  image("./assets/bench_2.png", width:100%),
+  caption: [Unit Step]
+)
