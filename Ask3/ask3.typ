@@ -245,11 +245,17 @@ $f approx 143 "MHz"$
 )
 
 == Test Bench
-Για δοκιμές επιλέχθηκαν δυο σήματα, μια Dirac και ένα unit step, οπότε περιμένουμε να
-δούμε κατά το πρώτο σήμα τα coefficients και κατά το δεύτερο περιμένουμε να δούμε ένα
-accumulation των τιμών του προηγουμένου.
-
+Για δοκιμές επιλέχθηκαν δυο σήματα, μια Dirac και ένα unit step. 
 #raw(read("./vhdl/bench/fir_bench.vhd"), lang: "vhdl")
+
+Περιμένουμε να δούμε κατά το πρώτο σήμα τα coefficients και κατά το δεύτερο
+περιμένουμε να δούμε ένα accumulation των τιμών του προηγουμένου. Δηλαδή
+$
+  y_1[n] = {limits(1)_arrow.t, 2, 3, 4, 5, 6, 7, 8} \
+
+  y_2[n] = {limits(1)_arrow.t, 3, 6, 10, 15, 21, 28, 36}
+$
+
 
 #figure(
   image("./assets/bench_1.png", width:100%),
@@ -258,5 +264,5 @@ accumulation των τιμών του προηγουμένου.
 
 #figure(
   image("./assets/bench_2.png", width:100%),
-  caption: [Unit Step]
+  caption: [Unit Step Response]
 )
