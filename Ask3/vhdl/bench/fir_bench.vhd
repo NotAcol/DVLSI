@@ -30,27 +30,34 @@ begin
     Reset <= '1';
     wait for CLK_PERIOD * 2;
     Reset <= '0';
-    wait for CLK_PERIOD * 2;
-
+    -- Dirac
     for i in 0 to 9 loop
-      ValidIn <= '1';
-      if i = 0 then
-        X <= "00000001"; 
-      else
-        X <= "00000000"; 
-      end if;
-      
-      wait for CLK_PERIOD;
-      
-      ValidIn <= '0';
-      X       <= "00000000";
-      
-      wait for CLK_PERIOD * 7; 
+        ValidIn <= '1';
+        if i = 0 then
+            X <= "00000001"; 
+        end if;
+        wait for CLK_PERIOD;
+        X <= "00000000";
+        ValidIn <= '0';
+        wait for CLK_PERIOD * 7; 
     end loop;
-
+    -- flush
+    
+    Reset <= '1';
+    wait for CLK_PERIOD * 2;
+    Reset <= '0';
+    -- Step
+    for i in 0 to 9 loop
+        ValidIn <= '1';
+        X <= "00000001"; 
+        wait for CLK_PERIOD;
+        ValidIn <= '0';
+        X       <= "00000000";
+        wait for CLK_PERIOD * 7; 
+    end loop;
     -- flush
     wait for CLK_PERIOD * 20;
     
-    assert false report "Simulation Finished" severity failure;
+    
   end process;
 end architecture;

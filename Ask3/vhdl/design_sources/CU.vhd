@@ -19,7 +19,7 @@ begin
     if Reset = '1' then
       Counter <= (others => '0');
       ValidOut <= '0';
-      RomEnable <= '0';
+      --RomEnable <= '0';
       RamEnable <= '0';
       RamWEnable <= '0';
       MacEnable <= '0';
@@ -32,6 +32,7 @@ begin
       MacEnable <= '1';
       MacInit   <= '0';
       ValidOut  <= '0';
+      RamWEnable <= '0';
 
       if Counter = "111" then
         ValidOut <= '1';
