@@ -14,7 +14,7 @@ end entity;
 architecture Behavioral of CU is 
   signal Counter : std_logic_vector(2 downto 0) := (others => '0');
   -- NOTE(acol): Added busy flag
-  signal Busy : std_logic := '0'
+  signal Busy : std_logic := '0';
 begin
   process(Clk, Reset) begin
     if Reset = '1' then
