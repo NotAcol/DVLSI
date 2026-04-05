@@ -1,0 +1,16 @@
+#-----------------------------------------------------------
+# Vivado v2022.2_AR000035739 (64-bit)
+# SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Wed Apr 30 10:02:01 2025
+# Process ID: 2029756
+# Current directory: /home/ipapal/Documents/Undergraduate_Courses/Digital_VLSI/dvlsi2021_lab5/scripts
+# Command line: vivado
+# Log file: /home/ipapal/Documents/Undergraduate_Courses/Digital_VLSI/dvlsi2021_lab5/scripts/vivado.log
+# Journal file: /home/ipapal/Documents/Undergraduate_Courses/Digital_VLSI/dvlsi2021_lab5/scripts/vivado.jou
+# Running On: lighthouse, OS: Linux, CPU Frequency: 3766.817 MHz, CPU Physical cores: 4, Host memory: 67291 MB
+#-----------------------------------------------------------
+start_gui
+source /home/ipapal/Documents/Undergraduate_Courses/Digital_VLSI/dvlsi2021_lab5/scripts/dvlsi_lab6_prj_v2022_2.tcl
+update_compile_order -fileset sources_1
+open_bd_design {/home/ipapal/Documents/Undergraduate_Courses/Digital_VLSI/dvlsi2021_lab5/dvlsi_lab6_prj/dvlsi_lab6_prj.srcs/sources_1/bd/design_1/design_1.bd}
