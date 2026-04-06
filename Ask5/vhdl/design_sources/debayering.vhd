@@ -5,7 +5,7 @@ use work.all;
 
 entity GbrgDebayer is
   generic(
-    ImageWidth  : integer := 32
+    ImageWidth  : integer := 1024
   );
   port(
     Clk      : in std_logic;
@@ -170,7 +170,7 @@ begin
             end if;
           end if;
 
-          -- NOTE(acol): enable isnt needed here but keeping it for my own sanity 👍
+          -- enable isnt needed here but keeping it for readability 👍
           ValidOut <= PipelineFilled and Enable;
 
           -- NOTE(acol): success conditions

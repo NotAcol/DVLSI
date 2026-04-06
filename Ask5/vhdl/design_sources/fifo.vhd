@@ -5,9 +5,7 @@ use ieee.numeric_std.all;
 package buffer_pkg is
   type ring_buffer_type is array (natural range <>) of std_logic_vector(7 downto 0);
 end package buffer_pkg;
-
 --------------------------------------------------------------------------------
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -18,20 +16,16 @@ entity RingBuffer is
       Depth : integer := 1024
   );
   port(
-      Clk     : in  std_logic;
-      RstN    : in  std_logic;
-      Enable  : in  std_logic;
-      DataIn  : in  std_logic_vector(7 downto 0);
-      DataOut : out std_logic_vector(7 downto 0)
+      Clk, RstN, Enable : in  std_logic;
+      DataIn            : in  std_logic_vector(7 downto 0);
+      DataOut           : out std_logic_vector(7 downto 0)
   );
 end entity RingBuffer;
 
 architecture Behavioral of RingBuffer is
-  -- NOTE(acol): can just index directly with this setup :)
   signal RamBuffer   : ring_buffer_type(0 to Depth - 1);
   signal Pointer     : natural range 0 to Depth - 1;
-
-  -- NOTE(acol): magic to force BRam, also DONT zero out on reset 
+  -- NOTE(acol): magic to force BRam
   attribute ram_style : string;
   attribute ram_style of RamBuffer : signal is "block";
 begin

@@ -52,9 +52,9 @@ StimulusProcess: process
     variable PixelCount   : integer := 0; 
     variable FlushTimeout : integer := 0; 
   begin
-    wait for 1000 ns; -- GSR wait
+    wait for 100 ns;
 
-    -- Synchronize to the FALLING edge to provide massive setup/hold margin
+    -- NOTE(acol): -5 hours, drive on falling edge 
     wait until falling_edge(Clk);
     RstN <= '0';
     ValidIn <= '0';
@@ -63,14 +63,14 @@ StimulusProcess: process
     RstN <= '1';
     wait for ClockPeriod * 2;
 
-    -- 1. Test Robustness
+    -- NOTE(acol): test with garbage in before NewImage
     ValidIn <= '1';
     PixelIn <= x"FF";
     wait for ClockPeriod * 5; 
     ValidIn <= '0';
     wait for ClockPeriod * 2;
 
-    -- 2. Stream real data
+    -- NOTE(acol): real data
     ValidIn <= '1';
     while not endfile(InputFile) loop
       readline(InputFile, InputLine);
@@ -86,35 +86,34 @@ StimulusProcess: process
         else
           NewImage <= '0';
         end if;
-        
-        -- DRIVE ON FALLING EDGE
+
         wait until falling_edge(Clk);
       end if;
     end loop;
 
     assert PixelCount > 0 
-      report "CRITICAL ERROR: 0 valid pixels read." severity failure;
+      report "ERROR: 0 valid pixels read." severity failure;
 
-    -- 3. Flush the pipeline
+    -- NOTE(acol): Flush
     PixelIn <= x"00";
     ValidIn <= '1'; 
     NewImage <= '0';
     
     while ImageFinished = '0' loop
-      -- WAIT ON FALLING EDGE
+      -- WAIT ON FALLING EDGE :)))
       wait until falling_edge(Clk);
       FlushTimeout := FlushTimeout + 1;
       
       assert FlushTimeout < 2000000 
-        report "CRITICAL ERROR: Flush loop timed out! ImageFinished never asserted." 
+        report "ERROR: Flush loop timed out! ImageFinished never asserted." 
         severity failure;
     end loop;
 
-    -- 4. Clean up
+
     ValidIn <= '0';
     wait for ClockPeriod * 5;
     
-    assert false report "End of Simulation (ImageFinished successfully triggered)" severity failure;
+    assert false report "The good ending" severity failure;
   end process;
 
   MonitorProcess: process
@@ -132,26 +131,23 @@ StimulusProcess: process
         hread(OutputLine, ExpectedG);
         hread(OutputLine, ExpectedB);
 
+        -- NOTE(acol): check if output pixel is the expected
         assert (PixelR = ExpectedR and PixelG = ExpectedG and PixelB = ExpectedB)
-          report "Mismatch! The output pixels do not match the expected_outputs.txt file."
-          severity error;
+          report "oh no" severity error;
 
-        -- Verify ImageFinished timing
+        -- NOTE(acol): ImageFinished timings
         if endfile(OutputFile) then
           assert ImageFinished = '1' 
-            report "ImageFinished should be '1' concurrently with the last ValidOut!" 
-            severity error;
+            report "ImageFinished not asserted at output end" severity error;
         else
           assert ImageFinished = '0' 
-            report "ImageFinished asserted too early!" 
-            severity error;
+            report "ImageFinished asserted too early" severity error;
         end if;
 
       else
-        assert false report "ValidOut asserted but no more expected outputs in file! (Did the module ingest dummy data?)"
-          severity error;
+        -- maybe check if accepting validin before new image signaled
+        assert false report "ValidOut asserted past expected eof" severity error;
       end if;
     end if;
   end process;
-
 end architecture;

@@ -5,7 +5,7 @@ use work.all;
 
 entity WindowGenerator is
   generic(
-    ImageWidth : integer := 1024
+    ImageWidth : integer := 32
   );
   port(
     Clk     : in  std_logic;
