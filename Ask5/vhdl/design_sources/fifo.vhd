@@ -23,8 +23,8 @@ entity RingBuffer is
 end entity RingBuffer;
 
 architecture Behavioral of RingBuffer is
-  signal RamBuffer   : ring_buffer_type(0 to Depth - 1);
-  signal Pointer     : natural range 0 to Depth - 1;
+  signal RamBuffer   : ring_buffer_type(0 to Depth - 2);
+  signal Pointer     : natural range 0 to Depth - 2;
   -- NOTE(acol): magic to force BRam
   attribute ram_style : string;
   attribute ram_style of RamBuffer : signal is "block";
@@ -39,7 +39,7 @@ begin
         DataOut            <= RamBuffer(Pointer);
         RamBuffer(Pointer) <= DataIn;
 
-        if Pointer = Depth - 1 then
+        if Pointer = Depth - 2 then
           Pointer <= 0;
         else
           Pointer <= Pointer + 1;

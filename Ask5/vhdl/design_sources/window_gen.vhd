@@ -34,7 +34,7 @@ begin
   -- NOTE(acol): Instantiations
   RingBuffer1: entity RingBuffer
     generic map(
-      Depth => ImageWidth - 4
+      Depth => ImageWidth - 3
     )
     port map(
       Clk     => Clk,
@@ -46,7 +46,7 @@ begin
     );
     RingBuffer2: entity RingBuffer
     generic map(
-      Depth => ImageWidth - 4
+      Depth => ImageWidth - 3
     )
     port map(
       Clk     => Clk,
