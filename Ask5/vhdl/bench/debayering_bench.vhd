@@ -46,7 +46,7 @@ begin
 
 StimulusProcess: process
     variable InputLine    : line;
-    variable ReadByte     : std_logic_vector(7 downto 0);
+    variable ReadInt      : integer;
     variable ReadGood     : boolean;
     variable IsFirstPixel : boolean := true;
     variable PixelCount   : integer := 0; 
@@ -74,11 +74,11 @@ StimulusProcess: process
     ValidIn <= '1';
     while not endfile(InputFile) loop
       readline(InputFile, InputLine);
-      hread(InputLine, ReadByte, ReadGood);
+      read(InputLine, ReadInt, ReadGood);
       
       if ReadGood then
         PixelCount := PixelCount + 1;
-        PixelIn <= ReadByte;
+        PixelIn <= std_logic_vector(to_unsigned(ReadInt, 8));
         
         if IsFirstPixel then
           NewImage <= '1';
@@ -133,20 +133,20 @@ StimulusProcess: process
 
         -- NOTE(acol): check if output pixel is the expected
         assert (PixelR = ExpectedR and PixelG = ExpectedG and PixelB = ExpectedB)
-          report "oh no" severity error;
+          report "oh no" severity failure;
 
         -- NOTE(acol): ImageFinished timings
         if endfile(OutputFile) then
           assert ImageFinished = '1' 
-            report "ImageFinished not asserted at output end" severity error;
+            report "ImageFinished not asserted at output end" severity failure;
         else
           assert ImageFinished = '0' 
-            report "ImageFinished asserted too early" severity error;
+            report "ImageFinished asserted too early" severity failure;
         end if;
 
       else
         -- maybe check if accepting validin before new image signaled
-        assert false report "ValidOut asserted past expected eof" severity error;
+        assert false report "ValidOut asserted past expected eof" severity failure;
       end if;
     end if;
   end process;

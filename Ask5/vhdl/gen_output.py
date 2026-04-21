@@ -1,72 +1,57 @@
 import sys
 
-def generate_golden_outputs(input_file, output_file, width=1024, height=1024):
-    # Read hex inputs into a 1D list of integers
+def GenerateGoldenOutputs(InputFile, OutputFile, ImageWidth=1024, ImageHeight=1024):
     try:
-        with open(input_file, 'r') as f:
-            raw_data = [int(line.strip(), 16) for line in f if line.strip()]
+        # Read strictly as base-10 decimal integers
+        with open(InputFile, 'r') as f:
+            RawData = [int(line.strip()) for line in f if line.strip()]
     except FileNotFoundError:
-        print(f"Error: Could not find {input_file}")
+        print(f"Error: Could not find {InputFile}")
         sys.exit(1)
 
-    if len(raw_data) < width * height:
-        print(f"Warning: Not enough pixels ({len(raw_data)}). Padding end with 0s.")
-        raw_data.extend([0] * (width * height - len(raw_data)))
+    if len(RawData) < ImageWidth * ImageHeight:
+        print(f"Warning: Padding end with 0s.")
+        RawData.extend([0] * (ImageWidth * ImageHeight - len(RawData)))
 
-    # Create a padded 2D grid initialized to 0s to handle the out-of-bounds edge cases
-    grid = [[0 for _ in range(width + 2)] for _ in range(height + 2)]
+    # Create padded grid
+    Grid = [[0 for _ in range(ImageWidth + 2)] for _ in range(ImageHeight + 2)]
     
-    for r in range(height):
-        for c in range(width):
-            grid[r + 1][c + 1] = raw_data[r * width + c]
+    for r in range(ImageHeight):
+        for c in range(ImageWidth):
+            Grid[r + 1][c + 1] = RawData[r * ImageWidth + c]
 
     # Process demosaicing
-    with open(output_file, 'w') as f:
-        for r in range(height):
-            for c in range(width):
-                # Padded coordinates mapping
-                pr, pc = r + 1, c + 1
+    with open(OutputFile, 'w') as f:
+        for r in range(ImageHeight):
+            for c in range(ImageWidth):
+                Pr, Pc = r + 1, c + 1
 
-                center = grid[pr][pc]
-                left   = grid[pr][pc - 1]
-                right  = grid[pr][pc + 1]
-                top    = grid[pr - 1][pc]
-                bottom = grid[pr + 1][pc]
-                tl     = grid[pr - 1][pc - 1]
-                tr     = grid[pr - 1][pc + 1]
-                bl     = grid[pr + 1][pc - 1]
-                br     = grid[pr + 1][pc + 1]
+                Center = Grid[Pr][Pc]
+                Left   = Grid[Pr][Pc - 1]
+                Right  = Grid[Pr][Pc + 1]
+                Top    = Grid[Pr - 1][Pc]
+                Bottom = Grid[Pr + 1][Pc]
+                Tl     = Grid[Pr - 1][Pc - 1]
+                Tr     = Grid[Pr - 1][Pc + 1]
+                Bl     = Grid[Pr + 1][Pc - 1]
+                Br     = Grid[Pr + 1][Pc + 1]
 
-                sum_horz  = left + right
-                sum_vert  = top + bottom
-                sum_cross = top + bottom + left + right
-                sum_diag  = tl + tr + bl + br
+                SumHorz  = Left + Right
+                SumVert  = Top + Bottom
+                SumCross = Top + Bottom + Left + Right
+                SumDiag  = Tl + Tr + Bl + Br
 
-                # GBRG Logic utilizing integer division (//) equivalent to VHDL bit shifting
                 if r % 2 == 0 and c % 2 == 0:
-                    # G in GB row
-                    p_g = center
-                    p_b = sum_horz // 2
-                    p_r = sum_vert // 2
+                    PixelG, PixelB, PixelR = Center, SumHorz // 2, SumVert // 2
                 elif r % 2 == 0 and c % 2 != 0:
-                    # B pixel
-                    p_b = center
-                    p_g = sum_cross // 4
-                    p_r = sum_diag // 4
+                    PixelB, PixelG, PixelR = Center, SumCross // 4, SumDiag // 4
                 elif r % 2 != 0 and c % 2 == 0:
-                    # R pixel
-                    p_r = center
-                    p_g = sum_cross // 4
-                    p_b = sum_diag // 4
+                    PixelR, PixelG, PixelB = Center, SumCross // 4, SumDiag // 4
                 else:
-                    # G in RG row
-                    p_g = center
-                    p_r = sum_horz // 2
-                    p_b = sum_vert // 2
+                    PixelG, PixelR, PixelB = Center, SumHorz // 2, SumVert // 2
 
                 # Write hex values separated by space, uppercase, 2 chars wide
-                f.write(f"{p_r:02X} {p_g:02X} {p_b:02X}\n")
+                f.write(f"{PixelR:02X} {PixelG:02X} {PixelB:02X}\n")
 
 if __name__ == "__main__":
-    # Ensure these match your VHDL generics
-    generate_golden_outputs("inputs.txt", "expected_outputs.txt", width=32, height=32)
+    GenerateGoldenOutputs("inputs.txt", "expected_outputs.txt", ImageWidth=32, ImageHeight=32)
