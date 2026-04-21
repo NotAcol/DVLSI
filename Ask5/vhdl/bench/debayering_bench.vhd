@@ -122,7 +122,7 @@ StimulusProcess: process
     variable ExpectedG  : std_logic_vector(7 downto 0);
     variable ExpectedB  : std_logic_vector(7 downto 0);
   begin
-    wait until falling_edge(Clk);
+    wait until rising_edge(Clk);
     
     if ValidOut = '1' then
       if not endfile(OutputFile) then
