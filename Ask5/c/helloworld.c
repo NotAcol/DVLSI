@@ -84,8 +84,8 @@ void Debayer(u8* InBuffer, u32* OutBuffer, i32 Width, i32 Height)
         PixelB = (u8)(SumVert >> 1);
       }
 
-      // pack to 32bit gbr00
-      OutBuffer[Row * Width + Col] = (PixelB << 16) | (PixelG << 8) | PixelR;
+      // pack to 32bit rgb00
+      OutBuffer[Row * Width + Col] = (PixelR << 16) | (PixelG << 8) | PixelB;
     }
   }
 }
@@ -125,11 +125,14 @@ i32 main()
     XAxiDma_IntrDisable(&TxAxiDma, XAXIDMA_IRQ_ALL_MASK, XAXIDMA_DMA_TO_DEVICE);
     XAxiDma_IntrDisable(&RxAxiDma, XAXIDMA_IRQ_ALL_MASK, XAXIDMA_DEVICE_TO_DMA);
 
-    // TODO(acol): maybe populate TxBuffer with dummy image data?
+    // NOTE(acol): populate TxBuffer with dummy image data
     for(i32 Idx = 0; Idx < NUM_PIXELS; Idx++)
     {
     	TxBuffer[Idx] = (u8)(Idx %256);
     }
+
+    i32 FlushPixels = IMAGE_WIDTH + 2;
+    i32 TxBytesWithFlush = TX_BYTES + FlushPixels;
 
     // NOTE(acol): HW part
     XTime_GetTime(&PreExecCyclesFpga);
@@ -137,16 +140,15 @@ i32 main()
     Status = XAxiDma_SimpleTransfer(&RxAxiDma, (UINTPTR)RxBuffer, RX_BYTES, XAXIDMA_DEVICE_TO_DMA);
     if (Status != XST_SUCCESS) return XST_FAILURE;
 
-    Status = XAxiDma_SimpleTransfer(&TxAxiDma, (UINTPTR)TxBuffer, TX_BYTES, XAXIDMA_DMA_TO_DEVICE);
+    // NOTE(acol): send TX_BYTES + (IMAGE_WIDTH +2)
+    Status = XAxiDma_SimpleTransfer(&TxAxiDma, (UINTPTR)TxBuffer, TxBytesWithFlush, XAXIDMA_DMA_TO_DEVICE);
     if (Status != XST_SUCCESS) return XST_FAILURE;
-
 
     // TODO(acol): maybe arm also has something like umonitor/umwait to dodge busy wait? or
     // at least pause to avoid nop loop
     while (XAxiDma_Busy(&TxAxiDma, XAXIDMA_DMA_TO_DEVICE)) {}
     while (XAxiDma_Busy(&RxAxiDma, XAXIDMA_DEVICE_TO_DMA)) {}
     XTime_GetTime(&PostExecCyclesFpga);
-
 
     // NOTE(acol): SW part
     XTime_GetTime(&PreExecCyclesSw);
@@ -161,13 +163,13 @@ i32 main()
         ErrorCount+= RxBuffer[Idx] != SwBuffer[Idx];
     }
     f32 ErrorPercentage = ((f32)ErrorCount / (f32)NUM_PIXELS) * 100.0f;
-    i32 FpgaCycles      = (i32)(PostExecCyclesFpga - PreExecCyclesFpga);
-    i32 SwCycles        = (i32)(PostExecCyclesSw - PreExecCyclesSw);
+    u32 FpgaCycles      = (u32)(PostExecCyclesFpga - PreExecCyclesFpga);
+    u32 SwCycles        = (u32)(PostExecCyclesSw - PreExecCyclesSw);
     f32 Speedup         = (f32)SwCycles / (f32)FpgaCycles;
 
     printf("Total Error: %.2f%%\r\n\r\n", ErrorPercentage);
-    printf("HW Exec time: %d cycles\r\n", FpgaCycles);
-    printf("SW Exec time: %d cycles\r\n", SwCycles);
+    printf("HW Exec time: %lu cycles\r\n", FpgaCycles);
+    printf("SW Exec time: %lu cycles\r\n", SwCycles);
     printf("Speedup: %.2f\r\n", Speedup);
 
     cleanup_platform();
